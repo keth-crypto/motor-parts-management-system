@@ -1,280 +1,205 @@
-
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
-
+import { useRouter } from "next/navigation";
 import { clearTokens } from "@/lib/auth";
-import { CONFIG } from "@/lib/config";
-
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [isChecking, setIsChecking] = useState(true);
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  useEffect(() => {
-    const hasToken = ["accessToken", "access_token", "token", "authToken"].some(
-      (key) => Boolean(window.localStorage.getItem(key)),
-    );
-
-    if (!hasToken) {
-      router.replace(CONFIG.ROUTES.LOGIN);
-      return;
-    }
-
-    setIsChecking(false);
-  }, [router]);
-
-  const handleLogout = () => {
-    if (isLoggingOut) return;
-
-    setIsLoggingOut(true);
+  function handleLogout() {
     clearTokens();
-    router.replace(CONFIG.ROUTES.LOGIN);
-  };
-
-  if (isChecking) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-neutral-950 text-white">
-        Verifying session...
-      </div>
-    );
+    router.push("/login");
   }
 
   return (
-    <div className="flex min-h-screen bg-neutral-950 text-white">
+    <div className="flex min-h-screen bg-black text-white">
 
-      {/* Sidebar */}
-      <aside className="hidden w-64 flex-col border-r border-neutral-800 bg-neutral-900 p-6 md:flex">
+      {/* SIDEBAR */}
+      <aside className="flex w-64 shrink-0 flex-col border-r border-zinc-800 bg-zinc-900 p-6">
 
-        <div className="mb-10">
-          <h1 className="text-2xl font-black tracking-wide">
+        <div className="mb-12">
+          <h1 className="text-2xl font-bold">
             MOTOR <span className="text-red-500">PARTS</span>
           </h1>
-          <p className="mt-1 text-xs tracking-widest text-neutral-500">
+          <p className="mt-1 text-xs tracking-widest text-gray-500">
             MANAGEMENT SYSTEM
           </p>
         </div>
 
-        <nav className="flex-1 space-y-3">
-
+        <nav className="flex-1 space-y-4">
           <Link
-            href={CONFIG.ROUTES.DASHBOARD}
-            className="flex items-center gap-3 rounded-lg bg-red-600 px-4 py-3 font-semibold text-white"
+            href="/dashboard"
+            className="block rounded-lg bg-red-600 px-4 py-3 font-bold hover:bg-red-700"
           >
-            <span>▦</span>
-            Dashboard
+            ▦ Dashboard
           </Link>
 
           <Link
             href="/motor-parts"
-            className="flex items-center gap-3 rounded-lg px-4 py-3 text-neutral-400 transition hover:bg-neutral-800 hover:text-white"
+            className="block rounded-lg px-4 py-3 text-gray-300 hover:bg-zinc-800 hover:text-white"
           >
-            <span>⚙</span>
-            Motor Parts
+            ⚙ Motor Parts
           </Link>
 
           <Link
             href="/brands"
-            className="flex items-center gap-3 rounded-lg px-4 py-3 text-neutral-400 transition hover:bg-neutral-800 hover:text-white"
+            className="block rounded-lg px-4 py-3 text-gray-300 hover:bg-zinc-800 hover:text-white"
           >
-            <span>◈</span>
-            Brands
+            ◇ Brands
           </Link>
 
           <Link
             href="/suppliers"
-            className="flex items-center gap-3 rounded-lg px-4 py-3 text-neutral-400 transition hover:bg-neutral-800 hover:text-white"
+            className="block rounded-lg px-4 py-3 text-gray-300 hover:bg-zinc-800 hover:text-white"
           >
-            <span>♙</span>
-            Suppliers
+            ♙ Suppliers
           </Link>
-
         </nav>
 
-        <div className="border-t border-neutral-800 pt-5">
-          <Button
-            variant="destructive"
-            className="w-full bg-red-600 hover:bg-red-700"
-            onClick={handleLogout}
-            disabled={isLoggingOut}
-          >
-            {isLoggingOut ? "Logging out..." : "Logout"}
-          </Button>
-        </div>
+        <button
+          onClick={handleLogout}
+          className="mt-8 rounded-lg border border-red-600 px-4 py-3 font-bold text-red-500 hover:bg-red-600 hover:text-white"
+        >
+          LOG OUT
+        </button>
       </aside>
 
-      {/* Main Content */}
+      {/* MAIN CONTENT */}
       <main className="min-w-0 flex-1 p-6 md:p-10">
 
-        {/* Header */}
-        <header className="mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-neutral-800 pb-6">
-
+        {/* HEADER */}
+        <header className="mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-zinc-800 pb-6">
           <div>
-            <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-red-500">
-              Overview
+            <p className="font-bold tracking-widest text-red-500">
+              OVERVIEW
             </p>
 
-            <h2 className="text-3xl font-bold">
+            <h2 className="mt-2 text-4xl font-bold">
               Dashboard
             </h2>
 
-            <p className="mt-2 text-neutral-400">
+            <p className="mt-3 text-gray-400">
               Welcome to your Motor Parts Management System.
             </p>
           </div>
 
-          <Button
-            variant="destructive"
-            className="bg-red-600 hover:bg-red-700 md:hidden"
-            onClick={handleLogout}
-            disabled={isLoggingOut}
-          >
-            {isLoggingOut ? "Logging out..." : "Logout"}
-          </Button>
-
-          <div className="hidden rounded-lg border border-neutral-800 bg-neutral-900 px-4 py-2 text-sm text-green-400 sm:block">
+          <div className="rounded-xl border border-zinc-800 bg-zinc-900 px-5 py-3 text-green-400">
             ● System Online
           </div>
-
         </header>
 
-        {/* Welcome Card */}
-        <Card className="mb-8 overflow-hidden border-neutral-800 bg-neutral-900 text-white">
+        {/* WELCOME CARD */}
+        <section className="mb-8 rounded-2xl border-r-8 border-red-600 bg-zinc-900 p-8">
+          <p className="font-bold tracking-widest text-red-500">
+            MOTOR PARTS MANAGEMENT
+          </p>
 
-          <CardContent className="relative p-8">
+          <h2 className="mt-4 text-3xl font-bold">
+            Welcome Back!
+          </h2>
 
-            <div className="absolute right-0 top-0 h-full w-2 bg-red-600" />
+          <p className="mt-4 max-w-2xl leading-relaxed text-gray-400">
+            You are successfully authenticated. Manage your motorcycle
+            parts, brands, and suppliers using your management dashboard.
+          </p>
+        </section>
 
-            <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-red-500">
-              Motor Parts Management
-            </p>
+        {/* MANAGEMENT CARDS */}
+        <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
 
-            <h3 className="text-2xl font-bold">
-              Welcome Back!
+          <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
+            <p className="text-gray-400">Motor Parts</p>
+
+            <h3 className="mt-5 text-3xl font-bold text-red-500">
+              Inventory
             </h3>
 
-            <p className="mt-3 max-w-xl text-neutral-400">
-              You are successfully authenticated.
-              Manage your motorcycle parts, brands, and suppliers
-              using your management dashboard.
+            <p className="mt-3 text-gray-400">
+              Manage motorcycle parts.
             </p>
 
-          </CardContent>
-        </Card>
+            <Link
+              href="/motor-parts"
+              className="mt-6 inline-block font-bold text-red-500 hover:text-red-400"
+            >
+              View Motor Parts →
+            </Link>
+          </div>
 
-        {/* Dashboard Statistics */}
-        <div className="mb-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
+            <p className="text-gray-400">Brands</p>
 
-          <Card className="border-neutral-800 bg-neutral-900 text-white">
-            <CardHeader>
-              <CardTitle className="text-sm font-medium text-neutral-400">
-                Motor Parts
-              </CardTitle>
-            </CardHeader>
+            <h3 className="mt-5 text-3xl font-bold text-red-500">
+              Management
+            </h3>
 
-            <CardContent>
-              <p className="text-3xl font-bold text-red-500">
-                Inventory
-              </p>
-              <p className="mt-2 text-sm text-neutral-500">
-                Manage motorcycle parts
-              </p>
-              <Link
-                href="/motor-parts"
-                className="mt-4 inline-block text-sm text-red-400 hover:underline"
-              >
-                View Motor Parts →
-              </Link>
-            </CardContent>
-          </Card>
+            <p className="mt-3 text-gray-400">
+              Manage motorcycle brands.
+            </p>
 
-          <Card className="border-neutral-800 bg-neutral-900 text-white">
-            <CardHeader>
-              <CardTitle className="text-sm font-medium text-neutral-400">
-                Brands
-              </CardTitle>
-            </CardHeader>
+            <Link
+              href="/brands"
+              className="mt-6 inline-block font-bold text-red-500 hover:text-red-400"
+            >
+              View Brands →
+            </Link>
+          </div>
 
-            <CardContent>
-              <p className="text-3xl font-bold text-red-500">
-                Management
-              </p>
-              <p className="mt-2 text-sm text-neutral-500">
-                Manage motorcycle brands
-              </p>
-              <Link
-                href="/brands"
-                className="mt-4 inline-block text-sm text-red-400 hover:underline"
-              >
-                View Brands →
-              </Link>
-            </CardContent>
-          </Card>
+          <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
+            <p className="text-gray-400">Suppliers</p>
 
-          <Card className="border-neutral-800 bg-neutral-900 text-white">
-            <CardHeader>
-              <CardTitle className="text-sm font-medium text-neutral-400">
-                Suppliers
-              </CardTitle>
-            </CardHeader>
+            <h3 className="mt-5 text-3xl font-bold text-red-500">
+              Management
+            </h3>
 
-            <CardContent>
-              <p className="text-3xl font-bold text-red-500">
-                Management
-              </p>
-              <p className="mt-2 text-sm text-neutral-500">
-                Manage your suppliers
-              </p>
-              <Link
-                href="/suppliers"
-                className="mt-4 inline-block text-sm text-red-400 hover:underline"
-              >
-                View Suppliers →
-              </Link>
-            </CardContent>
-          </Card>
+            <p className="mt-3 text-gray-400">
+              Manage your suppliers.
+            </p>
 
-        </div>
+            <Link
+              href="/suppliers"
+              className="mt-6 inline-block font-bold text-red-500 hover:text-red-400"
+            >
+              View Suppliers →
+            </Link>
+          </div>
 
-        {/* Quick Information */}
-        <Card className="border-neutral-800 bg-neutral-900 text-white">
-          <CardHeader>
-            <CardTitle className="text-lg">
-              System Information
-            </CardTitle>
-          </CardHeader>
+        </section>
 
-          <CardContent className="space-y-3 text-sm text-neutral-400">
+        {/* SYSTEM INFORMATION */}
+        <section className="mt-8 rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
+          <h3 className="text-xl font-bold">
+            System Information
+          </h3>
+
+          <div className="mt-5 space-y-3 text-gray-400">
             <p>
-              <span className="text-white">Application:</span>{" "}
+              <span className="font-bold text-white">Application:</span>{" "}
               Motor Parts Management System
             </p>
 
             <p>
-              <span className="text-white">Authentication:</span>{" "}
-              JWT Authentication
+              <span className="font-bold text-white">Frontend:</span>{" "}
+              Next.js
             </p>
 
             <p>
-              <span className="text-white">Session:</span>{" "}
-              <span className="text-green-400">Authenticated</span>
+              <span className="font-bold text-white">Backend:</span>{" "}
+              NestJS
             </p>
-          </CardContent>
-        </Card>
 
-        <footer className="mt-10 border-t border-neutral-800 pt-5 text-center text-xs text-neutral-600">
-          © 2026 Motor Parts Management System. All rights reserved.
-        </footer>
+            <p>
+              <span className="font-bold text-white">Database:</span>{" "}
+              MySQL
+            </p>
+
+            <p>
+              <span className="font-bold text-white">Operations:</span>{" "}
+              GET, POST, PUT, DELETE
+            </p>
+          </div>
+        </section>
 
       </main>
     </div>
