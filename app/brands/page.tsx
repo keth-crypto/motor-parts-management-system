@@ -2,7 +2,7 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://backend-bcge.onrender.com";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 const ENDPOINT = "/brands";
 
 type Brand = {
@@ -41,7 +41,10 @@ export default function BrandsPage() {
     const data = await response.json().catch(() => null);
 
     if (!response.ok) {
-      throw new Error(data?.message || `API error: ${response.status}`);
+      const msg = Array.isArray(data?.message)
+        ? data.message.join(", ")
+        : data?.message;
+      throw new Error(msg || `API error: ${response.status}`);
     }
 
     return data;

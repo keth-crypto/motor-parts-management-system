@@ -2,10 +2,10 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://backend-bcge.onrender.com";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
-// Change this if your NestJS controller uses @Controller("motor-parts")
-const ENDPOINT = "/motor_parts";
+// HYPHEN, tugma sa @Controller("motor-parts") sa backend
+const ENDPOINT = "/motor-parts";
 
 type MotorPart = {
   part_id: number;
@@ -15,12 +15,10 @@ type MotorPart = {
   supplier_id: number;
 };
 
-const emptyForm = {
-  motorPart: "",
-  price: "",
-  brand_id: "",
-  supplier_id: "",
-};
+const emptyForm = { motorPart: "", price: "", brand_id: "", supplier_id: "" };
+
+const inputClass =
+  "w-full rounded-lg border border-zinc-700 bg-black p-3 outline-none focus:border-red-500";
 
 export default function MotorPartsPage() {
   const [parts, setParts] = useState<MotorPart[]>([]);
@@ -49,28 +47,24 @@ export default function MotorPartsPage() {
     const data = await response.json().catch(() => null);
 
     if (!response.ok) {
-      throw new Error(data?.message || `API error: ${response.status}`);
+      const msg = Array.isArray(data?.message)
+        ? data.message.join(", ")
+        : data?.message;
+      throw new Error(msg || `API error: ${response.status}`);
     }
-
     return data;
   }
 
   async function fetchParts() {
     setLoading(true);
     setError("");
-
     try {
       const data = await request(ENDPOINT);
-      const records = Array.isArray(data)
-        ? data
-        : Array.isArray(data?.data)
-          ? data.data
-          : [];
-      setParts(records);
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Unable to load motor parts."
+      setParts(
+        Array.isArray(data) ? data : Array.isArray(data?.data) ? data.data : []
       );
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to load motor parts.");
     } finally {
       setLoading(false);
     }
@@ -109,7 +103,6 @@ export default function MotorPartsPage() {
       brand_id,
       supplier_id,
     };
-
     setSaving(true);
 
     try {
@@ -120,14 +113,11 @@ export default function MotorPartsPage() {
         await request(ENDPOINT, "POST", payload);
         setMessage("Motor part added successfully!");
       }
-
       setForm(emptyForm);
       setEditingId(null);
       await fetchParts();
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Unable to save motor part."
-      );
+      setError(err instanceof Error ? err.message : "Unable to save motor part.");
     } finally {
       setSaving(false);
     }
@@ -141,28 +131,21 @@ export default function MotorPartsPage() {
       brand_id: String(part.brand_id),
       supplier_id: String(part.supplier_id),
     });
-
     setError("");
     setMessage("");
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   async function handleDelete(id: number) {
-    if (!window.confirm("Are you sure you want to delete this motor part?")) {
-      return;
-    }
-
+    if (!window.confirm("Are you sure you want to delete this motor part?")) return;
     setError("");
     setMessage("");
-
     try {
       await request(`${ENDPOINT}/${id}`, "DELETE");
       setMessage("Motor part deleted successfully!");
       await fetchParts();
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Unable to delete motor part."
-      );
+      setError(err instanceof Error ? err.message : "Unable to delete motor part.");
     }
   }
 
@@ -184,7 +167,6 @@ export default function MotorPartsPage() {
             {message}
           </p>
         )}
-
         {error && (
           <p className="mb-5 rounded-lg bg-red-950 p-4 text-red-400">{error}</p>
         )}
@@ -199,11 +181,9 @@ export default function MotorPartsPage() {
               <div>
                 <label className="mb-2 block text-sm">Motor Part Name</label>
                 <input
-                  className="w-full rounded-lg border border-zinc-700 bg-black p-3 outline-none focus:border-red-500"
+                  className={inputClass}
                   value={form.motorPart}
-                  onChange={(e) =>
-                    setForm({ ...form, motorPart: e.target.value })
-                  }
+                  onChange={(e) => setForm({ ...form, motorPart: e.target.value })}
                   placeholder="Example: Brake Disc"
                   required
                 />
@@ -215,7 +195,7 @@ export default function MotorPartsPage() {
                   type="number"
                   min="0"
                   step="0.01"
-                  className="w-full rounded-lg border border-zinc-700 bg-black p-3 outline-none focus:border-red-500"
+                  className={inputClass}
                   value={form.price}
                   onChange={(e) => setForm({ ...form, price: e.target.value })}
                   placeholder="Enter price"
@@ -228,11 +208,9 @@ export default function MotorPartsPage() {
                 <input
                   type="number"
                   min="1"
-                  className="w-full rounded-lg border border-zinc-700 bg-black p-3 outline-none focus:border-red-500"
+                  className={inputClass}
                   value={form.brand_id}
-                  onChange={(e) =>
-                    setForm({ ...form, brand_id: e.target.value })
-                  }
+                  onChange={(e) => setForm({ ...form, brand_id: e.target.value })}
                   placeholder="Enter brand ID"
                   required
                 />
@@ -243,7 +221,7 @@ export default function MotorPartsPage() {
                 <input
                   type="number"
                   min="1"
-                  className="w-full rounded-lg border border-zinc-700 bg-black p-3 outline-none focus:border-red-500"
+                  className={inputClass}
                   value={form.supplier_id}
                   onChange={(e) =>
                     setForm({ ...form, supplier_id: e.target.value })

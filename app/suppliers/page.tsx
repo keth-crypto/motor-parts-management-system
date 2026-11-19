@@ -2,7 +2,7 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://backend-bcge.onrender.com";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 const ENDPOINT = "/suppliers";
 
 type Supplier = {
@@ -17,6 +17,9 @@ const emptyForm = {
   contact_number: "",
   address: "",
 };
+
+const inputClass =
+  "w-full rounded-lg border border-zinc-700 bg-black p-3 outline-none focus:border-red-500";
 
 export default function SuppliersPage() {
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
@@ -45,7 +48,10 @@ export default function SuppliersPage() {
     const data = await response.json().catch(() => null);
 
     if (!response.ok) {
-      throw new Error(data?.message || `API error: ${response.status}`);
+      const msg = Array.isArray(data?.message)
+        ? data.message.join(", ")
+        : data?.message;
+      throw new Error(msg || `API error: ${response.status}`);
     }
 
     return data;
@@ -175,7 +181,7 @@ export default function SuppliersPage() {
               <div>
                 <label className="mb-2 block text-sm">Supplier Name</label>
                 <input
-                  className="w-full rounded-lg border border-zinc-700 bg-black p-3 outline-none focus:border-red-500"
+                  className={inputClass}
                   value={form.supplier_name}
                   onChange={(e) =>
                     setForm({ ...form, supplier_name: e.target.value })
@@ -188,7 +194,7 @@ export default function SuppliersPage() {
               <div>
                 <label className="mb-2 block text-sm">Contact Number</label>
                 <input
-                  className="w-full rounded-lg border border-zinc-700 bg-black p-3 outline-none focus:border-red-500"
+                  className={inputClass}
                   value={form.contact_number}
                   onChange={(e) =>
                     setForm({ ...form, contact_number: e.target.value })
@@ -200,7 +206,7 @@ export default function SuppliersPage() {
               <div>
                 <label className="mb-2 block text-sm">Address</label>
                 <input
-                  className="w-full rounded-lg border border-zinc-700 bg-black p-3 outline-none focus:border-red-500"
+                  className={inputClass}
                   value={form.address}
                   onChange={(e) =>
                     setForm({ ...form, address: e.target.value })
